@@ -10,16 +10,38 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
+  const [all, setAll] = useState(0);
+  const [avg, setAvg] = useState(0);
+  const [pos, setPos] = useState(0);
+
   const handleGood = () => {
-    setGood(good + 1);
+    const updatedGood = good + 1;
+    setGood(updatedGood);
+
+    const updatedAll = all + 1;
+    setAll(updatedAll);
+    setAvg((updatedGood - bad) / updatedAll);
+    setPos((updatedGood / updatedAll) * 100);
   };
 
   const handleNeutral = () => {
-    setNeutral(neutral + 1);
+    const updatedNeutral = neutral + 1;
+    setNeutral(updatedNeutral);
+
+    const updatedAll = all + 1;
+    setAll(updatedAll);
+    setAvg((good - bad) / updatedAll);
+    setPos((good / updatedAll) * 100);
   };
 
   const handleBad = () => {
+    const updatedBad = bad + 1;
     setBad(bad + 1);
+
+    const updatedAll = all + 1;
+    setAll(updatedAll);
+    setAvg((good - updatedBad) / updatedAll);
+    setPos((good / updatedAll) * 100);
   };
 
   return (
@@ -36,6 +58,12 @@ const App = () => {
         neutral {neutral}
         <br />
         bad {bad}
+        <br />
+        all {all}
+        <br />
+        average {avg}
+        <br />
+        positive {pos} %
       </p>
     </div>
   );
