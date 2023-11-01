@@ -19,11 +19,9 @@ const App = () => {
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <div>had {points[selected]} votes</div>
-      <div>
-        {anecdotes[points.findIndex((el) => el >= Math.max(...points))]}
-      </div>
       <button
         onClick={() => {
           copy[selected] += 1;
@@ -40,6 +38,12 @@ const App = () => {
       >
         next anecdote
       </button>
+
+      <h1>Anecdote with most votes</h1>
+      <div>
+        {anecdotes[points.findIndex((el) => el >= Math.max(...points))]}
+      </div>
+      <div>has {Math.max(...points)} votes</div>
     </>
   );
 };
