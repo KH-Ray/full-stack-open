@@ -22,7 +22,6 @@ const App = () => {
       <div>{anecdotes[selected]}</div>
       <div>had {points[selected]} votes</div>
       <div>
-        Largest:{" "}
         {anecdotes[points.findIndex((el) => el >= Math.max(...points))]}
       </div>
       <button
