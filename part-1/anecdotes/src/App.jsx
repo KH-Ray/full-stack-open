@@ -26,7 +26,6 @@ const App = () => {
         onClick={() => {
           copy[selected] += 1;
           setPoints(copy);
-          console.log(points);
         }}
       >
         vote
