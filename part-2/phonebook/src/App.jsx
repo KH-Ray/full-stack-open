@@ -56,9 +56,8 @@ const App = () => {
       }
     }
 
-    personService
-      .createPerson({ name: newName, number: newNumber })
-      .then((data) => setPersons([...persons, data]));
+    personService.createPerson({ name: newName, number: newNumber });
+    // .then((data) => setPersons([...persons, data]));
   };
 
   const deletePerson = (personName, personId) => {
