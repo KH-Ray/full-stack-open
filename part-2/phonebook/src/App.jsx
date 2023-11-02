@@ -44,9 +44,7 @@ const App = () => {
   const [searchName, setSearchName] = useState("");
 
   useEffect(() => {
-    personService.getAllPerson().then((data) => {
-      setPersons(data);
-    });
+    personService.getAllPerson().then((data) => setPersons(data));
   }, [persons]);
 
   const addName = (e) => {
