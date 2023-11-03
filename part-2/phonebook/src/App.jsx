@@ -1,5 +1,21 @@
 import { useEffect, useState } from "react";
 import personService from "./services/persons";
+import "./index.css";
+
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return (
+    <div
+      className="notification"
+      style={type === "success" ? { color: "green" } : { color: "red" }}
+    >
+      {message}
+    </div>
+  );
+};
 
 const Filter = ({ handleSearchName }) => {
   return (
@@ -42,10 +58,12 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notificationType, setNotificationType] = useState("");
 
   useEffect(() => {
     personService.getAllPerson().then((data) => setPersons(data));
-  }, [persons]);
+  }, []);
 
   const addName = (e) => {
     e.preventDefault();
@@ -57,6 +75,12 @@ const App = () => {
     }
 
     personService.createPerson({ name: newName, number: newNumber });
+    setNotificationMessage(`Added ${newName}`);
+    setNotificationType("success");
+    setTimeout(() => {
+      setNotificationMessage(null);
+      setNotificationType("");
+    }, 5000);
   };
 
   const deletePerson = (personName, personId) => {
@@ -71,10 +95,18 @@ const App = () => {
         `${personName} is already added to phonebook, replace the old number with a new one?`
       )
     ) {
-      personService.updatePerson(
-        { name: newName, number: newNumber },
-        personId
-      );
+      personService
+        .updatePerson({ name: newName, number: newNumber }, personId)
+        .catch(() => {
+          setNotificationMessage(
+            `Information of ${newName} has already been remoced from server`
+          );
+          setNotificationType("error");
+        });
+      setTimeout(() => {
+        setNotificationMessage(null);
+        setNotificationType("");
+      }, 5000);
     }
   };
 
@@ -85,6 +117,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} type={notificationType} />
       <Filter handleSearchName={setSearchName} />
 
       <h3>add a new</h3>
