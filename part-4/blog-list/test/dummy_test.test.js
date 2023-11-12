@@ -54,3 +54,101 @@ describe("blog with largest likes", () => {
     });
   });
 });
+
+describe("author with the largest amount of blogs", () => {
+  const listWithManyBlog = [
+    {
+      title: "Tech Trends 2023: Navigating the Digital Frontier",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/tech-trends-2023",
+      likes: 180,
+    },
+    {
+      title: "The Power of Storytelling: Connecting Through Narratives",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/power-of-storytelling",
+      likes: 120,
+    },
+    {
+      title: "Sustainable Living: A Guide to Eco-Friendly Practices",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/sustainable-living",
+      likes: 250,
+    },
+    {
+      title: "Mindfulness Meditation: Finding Inner Peace in a Busy World",
+      author: "Olivia Anderson",
+      url: "https://exampleblog.com/mindfulness-meditation",
+      likes: 90,
+    },
+    {
+      title: "DIY Home Decor: Transforming Spaces with Creativity",
+      author: "Olivia Anderson",
+      url: "https://exampleblog.com/diy-home-decor",
+      likes: 120,
+    },
+    {
+      title: "The Science Behind Dreams: Decoding the Nightly Odyssey",
+      author: "Dr. Michael Reed",
+      url: "https://exampleblog.com/science-of-dreams",
+      likes: 200,
+    },
+  ];
+
+  test("find the author who has the largest amount of blogs", () => {
+    const result = listHelper.mostBlogs(listWithManyBlog);
+    expect(result).toEqual({
+      author: "Andrew Carter",
+      blogs: 3,
+    });
+  });
+});
+
+describe("author with the largest amount of likes", () => {
+  const listWithManyBlog = [
+    {
+      title: "Tech Trends 2023: Navigating the Digital Frontier",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/tech-trends-2023",
+      likes: 180,
+    },
+    {
+      title: "The Power of Storytelling: Connecting Through Narratives",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/power-of-storytelling",
+      likes: 120,
+    },
+    {
+      title: "Sustainable Living: A Guide to Eco-Friendly Practices",
+      author: "Andrew Carter",
+      url: "https://exampleblog.com/sustainable-living",
+      likes: 250,
+    },
+    {
+      title: "Mindfulness Meditation: Finding Inner Peace in a Busy World",
+      author: "Olivia Anderson",
+      url: "https://exampleblog.com/mindfulness-meditation",
+      likes: 90,
+    },
+    {
+      title: "DIY Home Decor: Transforming Spaces with Creativity",
+      author: "Olivia Anderson",
+      url: "https://exampleblog.com/diy-home-decor",
+      likes: 120,
+    },
+    {
+      title: "The Science Behind Dreams: Decoding the Nightly Odyssey",
+      author: "Olivia Anderson",
+      url: "https://exampleblog.com/science-of-dreams",
+      likes: 500,
+    },
+  ];
+
+  test("find the author who has the largest amount of likes", () => {
+    const result = listHelper.mostLikes(listWithManyBlog);
+    expect(result).toEqual({
+      author: "Olivia Anderson",
+      likes: 710,
+    });
+  });
+});
