@@ -104,9 +104,7 @@ const App = () => {
           )
         );
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error(err));
   }, [inputMessage]);
 
   return (
