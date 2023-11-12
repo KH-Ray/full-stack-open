@@ -74,18 +74,42 @@ const App = () => {
       }
     }
 
-    personService.createPerson({ name: newName, number: newNumber });
-    setNotificationMessage(`Added ${newName}`);
-    setNotificationType("success");
-    setTimeout(() => {
-      setNotificationMessage(null);
-      setNotificationType("");
-    }, 5000);
+    personService
+      .createPerson({ name: newName, number: newNumber })
+      .then(() => {
+        setNotificationMessage(`Added ${newName}`);
+        setNotificationType("success");
+      })
+      .catch((error) => {
+        setNotificationMessage(error.response.data.error);
+        setNotificationType("error");
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setNotificationMessage(null);
+          setNotificationType("");
+        }, 5000);
+      });
   };
 
   const deletePerson = (personName, personId) => {
     if (window.confirm(`Delete ${personName}?`)) {
-      personService.erasePerson(personId);
+      personService
+        .erasePerson(personId)
+        .then(() => {
+          setNotificationMessage(`Deleted ${personName}'s phone number`);
+          setNotificationType("success");
+        })
+        .catch((error) => {
+          setNotificationMessage(error.response.data.error);
+          setNotificationType("error");
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationType("");
+          }, 5000);
+        });
     }
   };
 
@@ -97,16 +121,20 @@ const App = () => {
     ) {
       personService
         .updatePerson({ name: newName, number: newNumber }, personId)
-        .catch(() => {
-          setNotificationMessage(
-            `Information of ${newName} has already been remoced from server`
-          );
+        .then(() => {
+          setNotificationMessage(`Updated ${newName}'s phone number`);
+          setNotificationType("success");
+        })
+        .catch((error) => {
+          setNotificationMessage(error.response.data.error);
           setNotificationType("error");
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationType("");
+          }, 5000);
         });
-      setTimeout(() => {
-        setNotificationMessage(null);
-        setNotificationType("");
-      }, 5000);
     }
   };
 
