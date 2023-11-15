@@ -10,9 +10,19 @@ blogsRouter.get("/", (request, response) => {
 blogsRouter.post("/", (request, response) => {
   const blog = new Blog(request.body);
 
-  blog.save().then((result) => {
-    response.status(201).json(result);
-  });
+  if (!blog?.likes) {
+    blog["likes"] = 0;
+  }
+
+  if (!blog?.title || !blog?.url) {
+    blog.save().then((result) => {
+      response.status(400).json(result);
+    });
+  } else {
+    blog.save().then((result) => {
+      response.status(201).json(result);
+    });
+  }
 });
 
 module.exports = blogsRouter;
