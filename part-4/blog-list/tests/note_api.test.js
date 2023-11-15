@@ -89,6 +89,34 @@ test('blogs have "title" and "url" property', async () => {
   await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
+test("blog returns status of 204 when deleted", async () => {
+  const blogsAtStart = await api.get("/api/blogs");
+  const blogToDelete = blogsAtStart.body[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const blogsAtEnd = await api.get("/api/blogs");
+  expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1);
+
+  const titles = blogsAtEnd.body.map((r) => r.title);
+  expect(titles).not.toContain(blogToDelete.title);
+});
+
+test(`blog's "id" property succesfully updated`, async () => {
+  const newBlog = {
+    likes: 1275,
+  };
+
+  const blogsAtStart = await api.get("/api/blogs");
+  const blogToUpdate = blogsAtStart.body[0];
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(newBlog).expect(204);
+
+  const blogsAtEnd = await api.get("/api/blogs");
+  const likes = blogsAtEnd.body.map((r) => r.likes);
+  expect(likes).toContain(1275);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
