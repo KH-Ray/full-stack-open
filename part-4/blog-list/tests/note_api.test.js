@@ -104,6 +104,9 @@ test("blog returns status of 204 when deleted", async () => {
 
 test(`blog's "id" property succesfully updated`, async () => {
   const newBlog = {
+    title: "DIY Home Decor: Transforming Spaces with Creativity",
+    author: "Olivia Anderson",
+    url: "https://exampleblog.com/diy-home-decor",
     likes: 1275,
   };
 
