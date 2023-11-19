@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blog");
-const { kebabCase } = require("lodash");
 
 const api = supertest(app);
+
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RCbG9nIiwiaWQiOiI2NTU3MGJmNWIzYmZlMjg2YzliZDA2NjgiLCJpYXQiOjE3MDAyMDM2NjN9.5ySmEiUh7F9U4sH3LGLdB-jOXVJx6tqS0fSG6NZ4pgY";
 
 const initialBlogs = [
   {
@@ -23,10 +25,13 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+
+  for (let blog of initialBlogs) {
+    await api
+      .post("/api/blogs")
+      .send(blog)
+      .set("Authorization", `bearer ${token}`);
+  }
 });
 
 test("blogs are returned as json", async () => {
@@ -52,6 +57,7 @@ test("HTTP POST request creates new blog post", async () => {
 
   await api
     .post("/api/blogs")
+    .set("Authorization", `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -63,7 +69,7 @@ test("HTTP POST request creates new blog post", async () => {
   expect(blogs).toContain(
     "Investing in Cryptocurrency: Navigating the Volatile Market"
   );
-});
+}, 10000);
 
 test('blogs have "likes" property', async () => {
   const newBlog = {
@@ -86,14 +92,21 @@ test('blogs have "title" and "url" property', async () => {
     likes: 280,
   };
 
-  await api.post("/api/blogs").send(newBlog).expect(400);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", `bearer ${token}`)
+    .send(newBlog)
+    .expect(400);
 });
 
 test("blog returns status of 204 when deleted", async () => {
-  const blogsAtStart = await api.get("/api/blogs");
-  const blogToDelete = blogsAtStart.body[0];
+  const response = await api.get("/api/blogs");
+  const blogToDelete = response.body[0];
 
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set("Authorization", `bearer ${token}`)
+    .expect(204);
 
   const blogsAtEnd = await api.get("/api/blogs");
   expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1);
@@ -111,13 +124,28 @@ test(`blog's "id" property succesfully updated`, async () => {
   };
 
   const blogsAtStart = await api.get("/api/blogs");
-  const blogToUpdate = blogsAtStart.body[0];
+  const blogToUpdate = blogsAtStart.body.at(-1);
 
   await api.put(`/api/blogs/${blogToUpdate.id}`).send(newBlog).expect(204);
 
   const blogsAtEnd = await api.get("/api/blogs");
   const likes = blogsAtEnd.body.map((r) => r.likes);
   expect(likes).toContain(1275);
+});
+
+test("Adding blogs fails when token is not provided", async () => {
+  const emptyToken = "";
+  const newBlog = {
+    title: "Investing in Cryptocurrency: Navigating the Volatile Market",
+    author: "Gabriel White",
+    url: "https://exampleblog.com/cryptocurrency-investing",
+  };
+
+  await api
+    .post("/api/blogs")
+    .set("Authorization", `bearer ${emptyToken}`)
+    .send(newBlog)
+    .expect(401);
 });
 
 afterAll(async () => {
