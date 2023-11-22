@@ -4,6 +4,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import "./index.css";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,10 +15,15 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [sort, setSort] = useState("");
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs);
+      setIsSending(false);
+    });
+  }, [isSending]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedNotappUser");
@@ -114,10 +120,6 @@ const App = () => {
             create
           </button>
         </form>
-
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
       </>
     );
   };
@@ -141,7 +143,37 @@ const App = () => {
       setTitle("");
       setAuthor("");
       setUrl("");
+      setIsSending(true);
     });
+  };
+
+  const updateBlog = (id) => {
+    const blog = blogs.find((b) => b.id === id);
+    const changedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user.id,
+    };
+
+    blogService.update(id, changedBlog).then((returnedBlog) => {
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+    });
+  };
+
+  const removeBlog = (id) => {
+    blogService.remove(id).then(() => setBlogs(blogs.map((blog) => blog)));
+  };
+
+  const blogsDisplay = () => {
+    const blogsCopy = [...blogs];
+
+    /* eslint-disable */
+    return sort === "ascending"
+      ? blogsCopy.sort((a, b) => a.likes - b.likes)
+      : sort === "descending"
+      ? blogsCopy.sort((a, b) => b.likes - a.likes)
+      : blogs;
+    /* eslint-enable */
   };
 
   return (
@@ -158,9 +190,24 @@ const App = () => {
           <div>
             {user.name} logged in <button onClick={handleLogout}>logout</button>
           </div>
-          {blogForm()}
+          <Togglable buttonLabel="new blog">{blogForm()}</Togglable>
         </>
       )}
+      <select onChange={(event) => setSort(event.target.value)}>
+        <option value="">---</option>
+        <option value="ascending">ascending</option>
+        <option value="descending">descending</option>
+      </select>
+      {blogsDisplay().map((blog, i) => (
+        <Blog
+          key={i}
+          blog={blog}
+          user={user}
+          handleIsSending={setIsSending}
+          updateBlog={updateBlog}
+          removeBlog={removeBlog}
+        />
+      ))}
     </div>
   );
 };
