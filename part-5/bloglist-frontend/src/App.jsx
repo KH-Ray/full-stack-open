@@ -5,6 +5,7 @@ import loginService from "./services/login";
 import "./index.css";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import BlogForm from "./components/BlogForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -70,6 +71,7 @@ const App = () => {
           value={username}
           name="username"
           onChange={({ target }) => setUsername(target.value)}
+          id="username"
         />
       </div>
       <div>
@@ -79,50 +81,14 @@ const App = () => {
           value={password}
           name="password"
           onChange={({ target }) => setPassword(target.value)}
+          id="password"
         />
       </div>
-      <button type="submit">login</button>
+      <button type="submit" id="login-button">
+        login
+      </button>
     </form>
   );
-
-  const blogForm = () => {
-    return (
-      <>
-        <h2>create new</h2>
-
-        <form>
-          <div>
-            title:{" "}
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            author:{" "}
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            url:{" "}
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-
-          <button type="submit" onClick={addBlog}>
-            create
-          </button>
-        </form>
-      </>
-    );
-  };
 
   const addBlog = (event) => {
     event.preventDefault();
@@ -188,9 +154,24 @@ const App = () => {
       {user && (
         <>
           <div>
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
+            {user.name} logged in{" "}
+            <button onClick={handleLogout} className="logoutButton">
+              logout
+            </button>
           </div>
-          <Togglable buttonLabel="new blog">{blogForm()}</Togglable>
+          <Togglable buttonLabel="new blog">
+            {
+              <BlogForm
+                title={title}
+                author={author}
+                url={url}
+                setTitle={setTitle}
+                setAuthor={setAuthor}
+                setUrl={setUrl}
+                addBlog={addBlog}
+              />
+            }
+          </Togglable>
         </>
       )}
       <select onChange={(event) => setSort(event.target.value)}>

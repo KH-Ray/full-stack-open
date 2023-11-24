@@ -18,18 +18,21 @@ const Blog = ({ blog, user, handleIsSending, updateBlog, removeBlog }) => {
   };
 
   return (
-    <div style={blogStyle}>
-      <div>
-        {blog.title}{" "}
-        <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
+    <div style={blogStyle} className="blog">
+      <div className="blogHeader">
+        {blog.title} {blog.author}{" "}
+        <button onClick={toggleVisibility} className="viewButton">
+          {visible ? "hide" : "view"}
+        </button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="blogDescription">
         <div>
           <a href="#">{blog.url}</a>
         </div>
         <div>
           likes {blog.likes}{" "}
           <button
+            className="likeButton"
             onClick={() => {
               updateBlog(blog.id);
               handleIsSending(true);
@@ -38,9 +41,10 @@ const Blog = ({ blog, user, handleIsSending, updateBlog, removeBlog }) => {
             like
           </button>
         </div>
-        <div>{blog.author}</div>
+        <div>{blog?.user?.name}</div>
         {user?.name === blog?.user?.name && (
           <button
+            className="removeButton"
             onClick={() => {
               if (window.confirm(`Remove blog ${blog.title} ${blog.author}`)) {
                 removeBlog(blog.id);
