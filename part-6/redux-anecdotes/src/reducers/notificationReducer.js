@@ -13,4 +13,14 @@ const notificationSlice = createSlice({
 });
 
 export const { showNotification } = notificationSlice.actions;
+
+export const setNotification = (content, time) => {
+  return (dispatch) => {
+    dispatch(showNotification(`you voted '${content}'`));
+    setTimeout(() => {
+      dispatch(showNotification(""));
+    }, time * 1000);
+  };
+};
+
 export default notificationSlice.reducer;
