@@ -1,4 +1,6 @@
-const Notification = ({ notify }) => {
+import { useNotificationValue } from "../NotificationContext";
+
+const Notification = () => {
   const style = {
     border: "solid",
     padding: 10,
@@ -6,15 +8,21 @@ const Notification = ({ notify }) => {
     marginBottom: 5,
   };
 
-  if (!notify) return;
+  const notifyValue = useNotificationValue();
 
-  if (notify === "error") {
+  if (!notifyValue) return;
+
+  if (notifyValue === "error") {
     return (
       <div style={style}>too short anecdote, must have length 5 or more</div>
     );
   }
 
-  return notify && <div style={style}>anecdote &apos;{notify}&apos; voted</div>;
+  return (
+    notifyValue && (
+      <div style={style}>anecdote &apos;{notifyValue}&apos; voted</div>
+    )
+  );
 };
 
 export default Notification;

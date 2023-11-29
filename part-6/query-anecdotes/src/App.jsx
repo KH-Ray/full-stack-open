@@ -2,24 +2,11 @@ import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAnecdotes, addVote } from "../request";
-import { useReducer } from "react";
-
-const notificationReducer = (state, action) => {
-  switch (action.type) {
-    case "SHOW":
-      return action.payload.content;
-
-    case "ERROR":
-      return action.payload;
-
-    default:
-      return false;
-  }
-};
+import { useNotificationDispatch } from "./NotificationContext";
 
 const App = () => {
-  const [notify, notifyDispatch] = useReducer(notificationReducer, "");
   const queryClient = useQueryClient();
+  const dispatch = useNotificationDispatch();
 
   const newAnecdoteMutation = useMutation({
     mutationFn: addVote,
@@ -31,9 +18,9 @@ const App = () => {
   const handleVote = (anecdote) => {
     newAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
 
-    notifyDispatch({ type: "SHOW", payload: anecdote });
+    dispatch({ type: "SHOW", payload: anecdote.content });
     setTimeout(() => {
-      notifyDispatch({ type: "HIDE", payload: "" });
+      dispatch({ type: "SHOW", payload: "" });
     }, 5000);
   };
 
@@ -43,13 +30,10 @@ const App = () => {
     retry: 1,
   });
 
-  if (result.isError) {
+  if (result.isError)
     return <div>anecdote service not available due to problems in server</div>;
-  }
 
-  if (result.isLoading) {
-    return <div>loading data...</div>;
-  }
+  if (result.isLoading) return <div>loading data...</div>;
 
   const anecdotes = result.data;
 
@@ -57,8 +41,8 @@ const App = () => {
     <div>
       <h3>Anecdote app</h3>
 
-      <Notification notify={notify} />
-      <AnecdoteForm dispatch={notifyDispatch} />
+      <Notification />
+      <AnecdoteForm />
 
       {anecdotes.map((anecdote) => (
         <div key={anecdote.id}>
