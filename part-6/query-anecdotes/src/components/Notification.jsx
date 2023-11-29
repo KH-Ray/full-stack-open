@@ -1,4 +1,4 @@
-const Notification = () => {
+const Notification = ({ notify }) => {
   const style = {
     border: "solid",
     padding: 10,
@@ -6,9 +6,15 @@ const Notification = () => {
     marginBottom: 5,
   };
 
-  if (true) return null;
+  if (!notify) return;
 
-  return <div style={style}></div>;
+  if (notify === "error") {
+    return (
+      <div style={style}>too short anecdote, must have length 5 or more</div>
+    );
+  }
+
+  return notify && <div style={style}>anecdote &apos;{notify}&apos; voted</div>;
 };
 
 export default Notification;
