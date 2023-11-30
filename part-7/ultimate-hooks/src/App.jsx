@@ -15,7 +15,7 @@ const useField = (type) => {
   };
 };
 
-const useResource = (baseUrl) => {
+const useResource = (baseUrl, isSending, setIsSending) => {
   const [resources, setResources] = useState([]);
 
   const create = async (resource) => {
@@ -33,7 +33,8 @@ const useResource = (baseUrl) => {
       setResources(response.data);
     };
     getResources(baseUrl);
-  }, [baseUrl]);
+    setIsSending(false);
+  }, [baseUrl, isSending, setIsSending]);
 
   return [resources, service];
 };
@@ -43,17 +44,29 @@ const App = () => {
   const name = useField("text");
   const number = useField("text");
 
-  const [notes, noteService] = useResource("http://localhost:3005/notes");
-  const [persons, personService] = useResource("http://localhost:3005/persons");
+  const [isSending, setIsSending] = useState(false);
+
+  const [notes, noteService] = useResource(
+    "http://localhost:3005/notes",
+    isSending,
+    setIsSending
+  );
+  const [persons, personService] = useResource(
+    "http://localhost:3005/persons",
+    isSending,
+    setIsSending
+  );
 
   const handleNoteSubmit = (event) => {
     event.preventDefault();
     noteService.create({ content: content.value });
+    setIsSending(true);
   };
 
   const handlePersonSubmit = (event) => {
     event.preventDefault();
     personService.create({ name: name.value, number: number.value });
+    setIsSending(true);
   };
 
   return (

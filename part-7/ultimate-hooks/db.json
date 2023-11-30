@@ -7,10 +7,6 @@
     {
       "id": 2,
       "content": "best feature ever <3"
-    },
-    {
-      "content": "Test note",
-      "id": 3
     }
   ],
   "persons": [
@@ -23,11 +19,6 @@
       "id": 2,
       "name": "hellas",
       "number": "012-123123"
-    },
-    {
-      "name": "Jessica",
-      "number": "91-123-4342432",
-      "id": 3
     }
   ]
 }
