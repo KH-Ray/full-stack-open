@@ -174,21 +174,16 @@ const resolvers = {
       return books;
     },
     editAuthor: (root, args) => {
-      if (books.find((book) => book.author === args.name)) {
-        let authorEdited;
-        authors = authors.map((author) => {
-          if (author.name === args.name) {
-            authorEdited = { ...author, born: args.setBornTo };
-            return authorEdited;
-          } else {
-            return author;
-          }
-        });
-
-        return authorEdited;
+      const author = authors.find((author) => author.name === args.name);
+      if (!author) {
+        return null;
       }
 
-      return null;
+      const updatedAuthor = { ...author, born: args.setBornTo };
+      authors = authors.map((author) =>
+        author.name === args.name ? updatedAuthor : author
+      );
+      return updatedAuthor;
     },
   },
 };
