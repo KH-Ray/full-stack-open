@@ -181,12 +181,28 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
+      if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author });
+        const booksResult = await Book.find({
+          author: author.id,
+          genres: args.genre,
+        }).populate("author");
+        return booksResult;
+      }
+
       if (args.author) {
-        return books.filter((book) => book.author === args.author);
+        const author = await Author.findOne({ name: args.author });
+        const foundBooks = await Book.find({ author: author }).populate(
+          "author"
+        );
+        return foundBooks;
       }
 
       if (args.genre) {
-        return books.filter((book) => book["genres"].includes(args.genre));
+        const genre = await Book.find({ genres: args.genre }).populate(
+          "author"
+        );
+        return genre;
       }
 
       return Book.find({}).populate("author");
