@@ -1,3 +1,9 @@
+import express from "express";
+
+const app = express();
+
+app.use(express.json());
+
 interface isNotNumberResult {
   numArgs: number[];
   targetArgs: number;
@@ -28,7 +34,7 @@ const isNotNumber = (args: string[]): isNotNumberResult => {
   });
 
   const exerciseDays = numbers.slice(0, -1);
-  const targetDays = numbers.at(-1);
+  const targetDays = Number(numbers.at(-1));
 
   return { numArgs: exerciseDays, targetArgs: targetDays };
 };
@@ -38,9 +44,9 @@ const calculateExercises = (days: number[], targetDays: number): Result => {
   const trainingDays: number = days.filter((v) => v > 0).length;
   const success: boolean = periodLength === trainingDays;
 
+  const trainingPercentage: number = (trainingDays / periodLength) * 100;
   let rating: number;
   let ratingDescription: string;
-  let trainingPercentage: number = (trainingDays / periodLength) * 100;
 
   if (trainingPercentage <= 30) {
     rating = 1;
@@ -81,3 +87,21 @@ try {
   }
   console.log(errorMessage);
 }
+
+app.post("/exercise", (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { daily_exercises, target } = req.body;
+
+  const result = calculateExercises(
+    daily_exercises as number[],
+    Number(target)
+  );
+
+  return res.send(result);
+});
+
+const PORT = 3002;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
