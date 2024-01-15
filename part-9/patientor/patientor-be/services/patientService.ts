@@ -7,17 +7,23 @@ const id = uuid();
 const patientDatas: Patient[] = patient;
 
 const getPatient = (): Patient[] => {
-  return patient;
+  return patient.map((p) => ({
+    ...p,
+    entries: [],
+  }));
 };
 
 const getNoSSNPatient = (): NoSSNPatient[] => {
-  return patient.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }));
+  return patient.map(
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+      entries,
+    })
+  );
 };
 
 const addPatient = (patient: NewPatient): Patient => {
