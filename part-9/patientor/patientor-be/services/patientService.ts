@@ -7,10 +7,7 @@ const id = uuid();
 const patientDatas: Patient[] = patient;
 
 const getPatient = (): Patient[] => {
-  return patient.map((p) => ({
-    ...p,
-    entries: [],
-  }));
+  return patient;
 };
 
 const getNoSSNPatient = (): NoSSNPatient[] => {
