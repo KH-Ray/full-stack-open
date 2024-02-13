@@ -1,4 +1,4 @@
-import { Gender, NewPatient } from "./types";
+import { Diagnoses, Gender, NewEntry, NewPatient } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -71,4 +71,57 @@ const toNewPatient = (object: unknown): NewPatient => {
   throw new Error("Incorrect data: a field is missing");
 };
 
-export default toNewPatient;
+const parseDescription = (description: unknown): string => {
+  if (!description || !isString(description)) {
+    throw new Error("Incorrect or missing comment");
+  }
+  return description;
+};
+
+const parseDate = (date: unknown): string => {
+  if (!date || !isString(date)) {
+    throw new Error("Incorrect or missing comment");
+  }
+  return date;
+};
+
+const parseSpecialist = (specialist: unknown): string => {
+  if (!specialist || !isString(specialist)) {
+    throw new Error("Incorrect or missing comment");
+  }
+  return specialist;
+};
+
+const parseDiagnosisCodes = (object: unknown): Array<Diagnoses["code"]> => {
+  if (!object || typeof object !== "object" || !("diagnosisCodes" in object)) {
+    return [] as Array<Diagnoses["code"]>;
+  }
+
+  return object.diagnosisCodes as Array<Diagnoses["code"]>;
+};
+
+const toNewEntries = (object: unknown): NewEntry => {
+  if (!object || typeof object !== "object") {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if (
+    "description" in object &&
+    "date" in object &&
+    "specialist" in object &&
+    "diagnosisCodes" in object
+  ) {
+    const newEntry: NewEntry = {
+      description: parseDescription(object.description),
+      specialist: parseSpecialist(object.specialist),
+      date: parseDate(object.date),
+      diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+    };
+
+    return newEntry;
+  }
+
+  throw new Error("Incorrect data: a field is missing");
+};
+
+export default { toNewPatient, toNewEntries };

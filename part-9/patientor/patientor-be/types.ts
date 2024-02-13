@@ -31,7 +31,7 @@ interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
-  diagnosisCodes?: Array<Diagnoses["code"]>;
+  diagnosisCodes: Array<Diagnoses["code"]>;
 }
 
 export enum HealthCheckRating {
@@ -67,7 +67,9 @@ interface HospitalEntry extends BaseEntry {
   discharge: Discharge;
 }
 
+export type NewEntry = Omit<BaseEntry, "id">;
+
 export type Entry =
+  | HealthCheckEntry
   | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
+  | OccupationalHealthcareEntry;
